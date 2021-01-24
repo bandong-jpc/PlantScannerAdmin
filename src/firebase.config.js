@@ -10,7 +10,13 @@ var firebaseConfig = {
   measurementId: "G-2JTLKBTS3K",
 };
 
-const firebaseApp = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+var firebaseApp;
+
+if (!firebase.apps.length) {
+  firebaseApp = firebase.initializeApp(firebaseConfig);
+} else {
+  firebaseApp = firebase.app();
+}
+const db = firebaseApp.firestore();
 
 export default db;

@@ -1,28 +1,37 @@
-import { makeStyles } from "@material-ui/core/styles";
+import {
+  createMuiTheme,
+  makeStyles,
+  ThemeProvider,
+} from "@material-ui/core/styles";
+import Body from "./components/Body";
+import CustomAppBar from "./components/CustomAppBar";
 
 const useStyles = makeStyles({
   root: {},
+});
+
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: "#93a368", dark: "#485936" },
+    secondary: {
+      main: "#fcfbfc",
+    },
+  },
+  typography: {
+    fontFamily: ["Epilogue", "sans serif"].join(","),
+  },
 });
 
 function App() {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className={classes.root}>
+        <CustomAppBar />
+        <Body />
+      </div>
+    </ThemeProvider>
   );
 }
 
