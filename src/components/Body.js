@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from "react";
+import {
+  Paper,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@material-ui/core";
 import db from "../firebase.config";
 
 const Body = () => {
   const [allPlants, setAllPlants] = useState([]);
 
   const fetchAll = async () => {
+    setAllPlants([]);
     await db
       .collection("plants")
       .get()
@@ -43,15 +54,32 @@ const Body = () => {
 
   return (
     <div>
-      {allPlants &&
-        allPlants.map((plant) => {
-          return (
-            <>
-              <h4>{plant.id}</h4>
-              <p>{plant.localName}</p>
-            </>
-          );
-        })}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableCell>Scientific Name</TableCell>
+            <TableCell>Local Name</TableCell>
+            <TableCell>Medicinal Use</TableCell>
+            <TableCell>Contributor</TableCell>
+            <TableCell>Approved</TableCell>
+          </TableHead>
+          <TableBody>
+            {allPlants.map((plant) => {
+              return (
+                <TableRow key={plant.id}>
+                  <TableCell>{plant.id}</TableCell>
+                  <TableCell>{plant.localName}</TableCell>
+                  <TableCell>{plant.medicinalUse}</TableCell>
+                  <TableCell>{plant.contributor}</TableCell>
+                  <TableCell>
+                    <Switch name="checkedB" color="primary" />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };
