@@ -1,6 +1,14 @@
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles({
+  root: {},
+});
+
 function App() {
+  const classes = useStyles();
+
   return (
-    <div className="App">
+    <div className={classes.root}>
       <header className="App-header">
         <p>
           Edit <code>src/App.js</code> and save to reload.
