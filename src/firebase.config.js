@@ -17,6 +17,7 @@ if (!firebase.apps.length) {
 } else {
   firebaseApp = firebase.app();
 }
-const db = firebaseApp.firestore();
+/* const db = firebaseApp.firestore();
+const storage = firebaseApp.storage(); */
 
-export default db;
+export default firebaseApp;
