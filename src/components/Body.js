@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Snackbar,
   Button,
   Dialog,
   Paper,
@@ -14,14 +15,16 @@ import {
   DialogContent,
   DialogActions,
 } from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
 import firebaseApp from "../firebase.config";
 
 const Body = () => {
-  const [allPlants, setAllPlants] = useState([]);
-  const [imgMap, setImgMap] = useState(new Map());
   const db = firebaseApp.firestore();
   const storage = firebaseApp.storage();
+  const [allPlants, setAllPlants] = useState([]);
+  const [imgMap, setImgMap] = useState(new Map());
   const [open, setOpen] = useState(false);
+  const [snack, setSnack] = useState(false);
   const [selected, setSelected] = useState({
     id: "",
     medicinalUse: "",
@@ -34,6 +37,10 @@ const Body = () => {
 
   const handleToggle = () => {
     setOpen(!open);
+  };
+
+  const handleSnackToggle = () => {
+    setOpen(!snack);
   };
 
   const openInNewTab = (url) => {
@@ -70,6 +77,15 @@ const Body = () => {
           setAllPlants((oldList) => [...oldList, plant]);
         });
       });
+  };
+
+  const update = () => {
+    const plantRef = db.collection("plants").doc(selected.id);
+    plantRef.update({ approved: true }).then(() => {
+      fetchAll();
+      handleSnackToggle();
+      handleToggle();
+    });
   };
 
   const getUrls = () => {
@@ -146,6 +162,20 @@ const Body = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Snackbar
+        open={snack}
+        autoHideDuration={6000}
+        onClose={handleSnackToggle}
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={handleSnackToggle}
+          severity="success"
+        >
+          Contribution approved!
+        </MuiAlert>
+      </Snackbar>
       <Dialog open={open} onClose={handleToggle}>
         <DialogTitle>
           Approve the contribution by <b>{selected.contributor}</b>?
@@ -165,7 +195,7 @@ const Body = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleToggle}>Cancel</Button>
-          <Button onClick={handleToggle} color="primary" autoFocus>
+          <Button onClick={update} color="primary" autoFocus>
             Approve
           </Button>
         </DialogActions>
