@@ -63,6 +63,7 @@ const Body = () => {
             approved,
             file,
             contributorUID,
+            benefits,
           } = item.data();
 
           const plant = {
@@ -73,6 +74,7 @@ const Body = () => {
             approved,
             file,
             contributorUID,
+            benefits,
           };
           setAllPlants((oldList) => [...oldList, plant]);
         });
@@ -117,6 +119,7 @@ const Body = () => {
             <TableCell>Image</TableCell>
             <TableCell>Local Name</TableCell>
             <TableCell>Medicinal Use</TableCell>
+            <TableCell>Benefits</TableCell>
             <TableCell>Contributor</TableCell>
             <TableCell>Approved</TableCell>
           </TableHead>
@@ -138,6 +141,7 @@ const Body = () => {
                   </TableCell>
                   <TableCell>{plant.localName}</TableCell>
                   <TableCell>{plant.medicinalUse}</TableCell>
+                  <TableCell>{plant.benefits}</TableCell>
                   <TableCell>{plant.contributor}</TableCell>
                   <TableCell>
                     {plant.approved ? (
@@ -185,6 +189,8 @@ const Body = () => {
             Scientific Name: {selected.id} <br />
             Local Name: {selected.localName} <br />
             Medicinal Use: {selected.medicinalUse}
+            <br />
+            Benefits: {selected.benefits}
             <br />
             Image: <br />
             <img
