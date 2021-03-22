@@ -22,12 +22,7 @@ import firebaseApp from "../firebase.config";
 import { Edit, Delete } from "@material-ui/icons/";
 
 const Body = (trigger) => {
-    const db = firebaseApp.firestore();
-    const storage = firebaseApp.storage();
-    const [allPlants, setAllPlants] = useState([]);
-    const [open, setOpen] = useState(false);
-    const [snack, setSnack] = useState(false);
-    const [selected, setSelected] = useState({
+    const defaultVal = {
         id: "",
         medicinalUse: "",
         localName: "",
@@ -36,7 +31,17 @@ const Body = (trigger) => {
         file: "",
         contributorUID: "",
         imgUrl: "",
+    };
+    const db = firebaseApp.firestore();
+    const storage = firebaseApp.storage();
+    const [allPlants, setAllPlants] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [snack, setSnack] = useState({
+        severity: "success",
+        content: "Plant Added!",
+        open: false,
     });
+    const [selected, setSelected] = useState(defaultVal);
     const [deleteOpen, setDeleteOpen] = useState(false);
 
     const handleDelete = () => {
@@ -48,7 +53,7 @@ const Body = (trigger) => {
     };
 
     const handleSnackToggle = () => {
-        setOpen(!snack);
+        setSnack({ ...snack, open: false });
     };
 
     const openInNewTab = (url) => {
@@ -105,6 +110,29 @@ const Body = (trigger) => {
             handleSnackToggle();
             handleToggle();
         });
+    };
+
+    const deletePlant = () => {
+        db.collection("plants")
+            .doc(selected.id)
+            .delete()
+            .then(() => {
+                setSnack({
+                    open: true,
+                    content: "Plant deleted!",
+                    severity: "success",
+                });
+                fetchAll();
+            })
+            .catch((error) => {
+                setSnack({
+                    open: true,
+                    content: "Error" + error,
+                    severity: "error",
+                });
+            });
+
+        handleDelete();
     };
 
     /* useEffect(() => {
@@ -200,7 +228,7 @@ const Body = (trigger) => {
                 </Table>
             </TableContainer>
             <Snackbar
-                open={snack}
+                open={snack.open}
                 autoHideDuration={6000}
                 onClose={handleSnackToggle}
             >
@@ -208,9 +236,9 @@ const Body = (trigger) => {
                     elevation={6}
                     variant="filled"
                     onClose={handleSnackToggle}
-                    severity="success"
+                    severity={snack.severity}
                 >
-                    Contribution approved!
+                    {snack.content}
                 </MuiAlert>
             </Snackbar>
 
@@ -253,7 +281,7 @@ const Body = (trigger) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDelete}>Cancel</Button>
-                    <Button onClick={handleDelete} color="primary" autoFocus>
+                    <Button onClick={deletePlant} color="primary" autoFocus>
                         Confirm
                     </Button>
                 </DialogActions>
