@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
     Snackbar,
     Button,
-    Dialog,
     Paper,
     Table,
     TableBody,
@@ -10,15 +9,19 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Dialog,
     DialogTitle,
-    DialogContentText,
     DialogContent,
+    DialogContentText,
     DialogActions,
+    TextField,
 } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import MuiAlert from "@material-ui/lab/Alert";
 import firebaseApp from "../firebase.config";
+import { Edit, Delete } from "@material-ui/icons/";
 
-const Body = () => {
+const Body = (trigger) => {
     const db = firebaseApp.firestore();
     const storage = firebaseApp.storage();
     const [allPlants, setAllPlants] = useState([]);
@@ -32,7 +35,13 @@ const Body = () => {
         approved: "",
         file: "",
         contributorUID: "",
+        imgUrl: "",
     });
+    const [deleteOpen, setDeleteOpen] = useState(false);
+
+    const handleDelete = () => {
+        setDeleteOpen(!deleteOpen);
+    };
 
     const handleToggle = () => {
         setOpen(!open);
@@ -98,9 +107,13 @@ const Body = () => {
         });
     };
 
+    /* useEffect(() => {
+        fetchAll();
+    }, []); */
+
     useEffect(() => {
         fetchAll();
-    }, []);
+    }, [trigger]);
 
     return (
         <div>
@@ -114,6 +127,7 @@ const Body = () => {
                         <TableCell>Benefits</TableCell>
                         <TableCell>Contributor</TableCell>
                         <TableCell>Approved</TableCell>
+                        <TableCell>Actions</TableCell>
                     </TableHead>
                     <TableBody>
                         {allPlants.map((plant) => {
@@ -139,21 +153,45 @@ const Body = () => {
                                     <TableCell>{plant.benefits}</TableCell>
                                     <TableCell>{plant.contributor}</TableCell>
                                     <TableCell>
-                                        {plant.approved ? (
-                                            "Approved"
-                                        ) : (
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={() => {
-                                                    setSelected(plant);
+                                        {plant.approved
+                                            ? "Approved"
+                                            : "Not Approved"}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Button
+                                            variant="outlined"
+                                            style={{
+                                                backgroundColor: "#93a368",
+                                            }}
+                                            size="small"
+                                            style={{ marginBottom: "5px" }}
+                                            startIcon={<Edit />}
+                                            color="primary"
+                                            onClick={() => {
+                                                setSelected(plant);
 
-                                                    handleToggle();
-                                                }}
-                                            >
-                                                Approve
-                                            </Button>
-                                        )}
+                                                handleToggle();
+                                            }}
+                                        >
+                                            Edit
+                                        </Button>
+
+                                        <Button
+                                            variant="outlined"
+                                            style={{
+                                                backgroundColor: "#ac0e28",
+                                            }}
+                                            size="small"
+                                            startIcon={<Delete />}
+                                            color="secondary"
+                                            onClick={() => {
+                                                setSelected(plant);
+
+                                                handleDelete();
+                                            }}
+                                        >
+                                            Delete
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             );
@@ -175,12 +213,11 @@ const Body = () => {
                     Contribution approved!
                 </MuiAlert>
             </Snackbar>
+
             <Dialog open={open} onClose={handleToggle}>
-                <DialogTitle>
-                    Approve the contribution by <b>{selected.contributor}</b>?
-                </DialogTitle>
+                <DialogTitle>{selected.id}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
+                    {/* <DialogContentText>
                         Scientific Name: {selected.id} <br />
                         Local Name: {selected.localName} <br />
                         Medicinal Use: {selected.medicinalUse}
@@ -192,12 +229,32 @@ const Body = () => {
                             src={selected.imgUrl}
                             style={{ maxWidth: "500px", maxHeight: "500px" }}
                         />
-                    </DialogContentText>
+                    </DialogContentText> */}
+                    {/* <TextField id="localNameTF" />
+                    <img
+                        src={selected.imgUrl}
+                        style={{ maxWidth: "500px", maxHeight: "500px" }}
+                    /> */}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleToggle}>Cancel</Button>
                     <Button onClick={update} color="primary" autoFocus>
-                        Approve
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={deleteOpen} onClose={handleDelete}>
+                <DialogTitle>Confirm Delete</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to remove <b>{selected.id}</b>?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDelete}>Cancel</Button>
+                    <Button onClick={handleDelete} color="primary" autoFocus>
+                        Confirm
                     </Button>
                 </DialogActions>
             </Dialog>
