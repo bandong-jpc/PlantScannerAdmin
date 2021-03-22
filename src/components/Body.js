@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+    Switch,
     Snackbar,
     Button,
     Paper,
@@ -15,19 +16,38 @@ import {
     DialogContentText,
     DialogActions,
     TextField,
+    FormControlLabel,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { styled, makeStyles } from "@material-ui/core/styles";
 import MuiAlert from "@material-ui/lab/Alert";
 import firebaseApp from "../firebase.config";
 import { Edit, Delete } from "@material-ui/icons/";
 
+const StyledTF = styled(TextField)({
+    margin: "20px 0px",
+});
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        flexGrow: 1,
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+    },
+    title: {
+        flexGrow: 1,
+    },
+}));
+
 const Body = (trigger) => {
+    const classes = useStyles();
     const defaultVal = {
+        benefits: "",
         id: "",
         medicinalUse: "",
         localName: "",
         contributor: "",
-        approved: "",
+        approved: false,
         file: "",
         contributorUID: "",
         imgUrl: "",
@@ -103,13 +123,61 @@ const Body = (trigger) => {
             });
     };
 
+    const [formValid, setFormValid] = useState({
+        medicinalUse: false,
+        localName: false,
+        benefits: false,
+    });
+
+    const onTFChange = (e) => {
+        setSelected({ ...selected, [e.target.name]: e.target.value });
+        setFormValid({ ...formValid, [e.target.name]: false });
+    };
+
+    const onSwitch = (e) => {
+        setSelected({ ...selected, approved: e.target.checked });
+    };
+
     const update = () => {
         const plantRef = db.collection("plants").doc(selected.id);
-        plantRef.update({ approved: true }).then(() => {
-            fetchAll();
-            handleSnackToggle();
-            handleToggle();
-        });
+
+        if (
+            selected.localName === "" ||
+            selected.medicinalUse === "" ||
+            selected.benefits === ""
+        ) {
+            if (selected.localName === "")
+                setFormValid({ ...formValid, localName: true });
+            if (selected.medicinalUse === "")
+                setFormValid({ ...formValid, medicinalUse: true });
+            if (selected.benefits === "")
+                setFormValid({ ...formValid, benefits: true });
+        } else {
+            plantRef
+                .update({
+                    approved: selected.approved,
+                    localName: selected.localName,
+                    medicinalUse: selected.medicinalUse,
+                    benefits: selected.benefits,
+                })
+                .then(() => {
+                    setSnack({
+                        open: true,
+                        content: "Plant updated!",
+                        severity: "success",
+                    });
+                    fetchAll();
+                    handleSnackToggle();
+                    handleToggle();
+                })
+                .catch((error) => {
+                    setSnack({
+                        open: true,
+                        content: "Error" + error,
+                        severity: "error",
+                    });
+                });
+        }
     };
 
     const deletePlant = () => {
@@ -188,9 +256,6 @@ const Body = (trigger) => {
                                     <TableCell>
                                         <Button
                                             variant="outlined"
-                                            style={{
-                                                backgroundColor: "#93a368",
-                                            }}
                                             size="small"
                                             style={{ marginBottom: "5px" }}
                                             startIcon={<Edit />}
@@ -245,27 +310,81 @@ const Body = (trigger) => {
             <Dialog open={open} onClose={handleToggle}>
                 <DialogTitle>{selected.id}</DialogTitle>
                 <DialogContent>
-                    {/* <DialogContentText>
-                        Scientific Name: {selected.id} <br />
-                        Local Name: {selected.localName} <br />
-                        Medicinal Use: {selected.medicinalUse}
-                        <br />
-                        Benefits: {selected.benefits}
-                        <br />
-                        Image: <br />
-                        <img
-                            src={selected.imgUrl}
-                            style={{ maxWidth: "500px", maxHeight: "500px" }}
+                    <form
+                        className={classes.root}
+                        noValidate
+                        autoComplete="off"
+                    >
+                        <StyledTF
+                            error={formValid.localName}
+                            id="localName"
+                            name="localName"
+                            value={selected.localName}
+                            onChange={onTFChange}
+                            label="Local Name"
+                            variant="outlined"
+                            fullWidth
+                            multiline
+                            rowsMax={8}
+                            rows={3}
+                            helperText="Required"
                         />
-                    </DialogContentText> */}
-                    {/* <TextField id="localNameTF" />
-                    <img
-                        src={selected.imgUrl}
-                        style={{ maxWidth: "500px", maxHeight: "500px" }}
-                    /> */}
+                        <StyledTF
+                            error={formValid.medicinalUse}
+                            id="medicinalUse"
+                            name="medicinalUse"
+                            value={selected.medicinalUse}
+                            onChange={onTFChange}
+                            label="Medicinal Use"
+                            variant="outlined"
+                            fullWidth
+                            multiline
+                            rowsMax={8}
+                            rows={3}
+                            helperText="Required"
+                        />
+                        <StyledTF
+                            error={formValid.benefits}
+                            id="benefits"
+                            name="benefits"
+                            value={selected.benefits}
+                            onChange={onTFChange}
+                            label="Benefits"
+                            variant="outlined"
+                            fullWidth
+                            multiline
+                            rowsMax={8}
+                            rows={3}
+                            helperText="Required"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={selected.approved}
+                                    onChange={onSwitch}
+                                    name="approved"
+                                    color="primary"
+                                />
+                            }
+                            label={
+                                selected.approved ? "Approved" : "Not Approved"
+                            }
+                        />
+                    </form>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleToggle}>Cancel</Button>
+                    <Button
+                        onClick={() => {
+                            setFormValid({
+                                medicinalUse: false,
+                                localName: false,
+                                benefits: false,
+                            });
+                            handleToggle();
+                        }}
+                    >
+                        Cancel
+                    </Button>
                     <Button onClick={update} color="primary" autoFocus>
                         Save
                     </Button>
