@@ -46,10 +46,10 @@ const Body = (trigger) => {
         id: "",
         medicinalUse: "",
         localName: "",
-        contributor: "",
+        /* contributor: "", */
         approved: false,
         file: "",
-        contributorUID: "",
+        /* contributorUID: "", */
         imgUrl: "",
     };
     const db = firebaseApp.firestore();
@@ -94,10 +94,10 @@ const Body = (trigger) => {
                     const {
                         medicinalUse,
                         localName,
-                        contributor,
+                        /* contributor, */
                         approved,
                         file,
-                        contributorUID,
+                        /* contributorUID, */
                         benefits,
                     } = item.data();
 
@@ -105,10 +105,10 @@ const Body = (trigger) => {
                         id: item.id,
                         medicinalUse,
                         localName,
-                        contributor,
+                        /* contributor, */
                         approved,
                         file,
-                        contributorUID,
+                        /* contributorUID, */
                         benefits,
                     };
 
@@ -221,7 +221,7 @@ const Body = (trigger) => {
                         <TableCell>Local Name</TableCell>
                         <TableCell>Medicinal Use</TableCell>
                         <TableCell>Benefits</TableCell>
-                        <TableCell>Contributor</TableCell>
+                        {/* <TableCell>Contributor</TableCell> */}
                         <TableCell>Approved</TableCell>
                         <TableCell>Actions</TableCell>
                     </TableHead>
@@ -247,7 +247,7 @@ const Body = (trigger) => {
                                     <TableCell>{plant.localName}</TableCell>
                                     <TableCell>{plant.medicinalUse}</TableCell>
                                     <TableCell>{plant.benefits}</TableCell>
-                                    <TableCell>{plant.contributor}</TableCell>
+                                    {/* <TableCell>{plant.contributor}</TableCell> */}
                                     <TableCell>
                                         {plant.approved
                                             ? "Approved"
@@ -308,7 +308,29 @@ const Body = (trigger) => {
             </Snackbar>
 
             <Dialog open={open} onClose={handleToggle}>
-                <DialogTitle>{selected.id}</DialogTitle>
+                <DialogTitle>
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        {selected.id}
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={selected.approved}
+                                    onChange={onSwitch}
+                                    name="approved"
+                                    color="primary"
+                                />
+                            }
+                            label={
+                                selected.approved ? "Approved" : "Not Approved"
+                            }
+                        />
+                    </div>
+                </DialogTitle>
                 <DialogContent>
                     <form
                         className={classes.root}
@@ -356,19 +378,6 @@ const Body = (trigger) => {
                             rowsMax={8}
                             rows={3}
                             helperText="Required"
-                        />
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={selected.approved}
-                                    onChange={onSwitch}
-                                    name="approved"
-                                    color="primary"
-                                />
-                            }
-                            label={
-                                selected.approved ? "Approved" : "Not Approved"
-                            }
                         />
                     </form>
                 </DialogContent>
