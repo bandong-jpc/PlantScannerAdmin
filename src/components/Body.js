@@ -229,7 +229,6 @@ const Body = (trigger) => {
             <TableCell>Medicinal Use</TableCell>
             <TableCell>Benefits</TableCell>
             <TableCell>Proper Usage</TableCell>
-            <TableCell>Approved</TableCell>
             <TableCell>Actions</TableCell>
           </TableHead>
           <TableBody>
@@ -255,10 +254,6 @@ const Body = (trigger) => {
                   <TableCell>{plant.medicinalUse}</TableCell>
                   <TableCell>{plant.benefits}</TableCell>
                   <TableCell>{plant.properUsage}</TableCell>
-
-                  <TableCell>
-                    {plant.approved ? "Approved" : "Not Approved"}
-                  </TableCell>
                   <TableCell>
                     <Button
                       variant="outlined"
@@ -322,7 +317,7 @@ const Body = (trigger) => {
             }}
           >
             {selected.id}
-            <FormControlLabel
+            {/* <FormControlLabel
               control={
                 <Switch
                   checked={selected.approved}
@@ -332,7 +327,7 @@ const Body = (trigger) => {
                 />
               }
               label={selected.approved ? "Approved" : "Not Approved"}
-            />
+            /> */}
           </div>
         </DialogTitle>
         <DialogContent>
@@ -402,6 +397,7 @@ const Body = (trigger) => {
                 medicinalUse: false,
                 localName: false,
                 benefits: false,
+                properUsage: false,
               });
               handleToggle();
             }}
