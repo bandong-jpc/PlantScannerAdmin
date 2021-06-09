@@ -27,6 +27,14 @@ const StyledTF = styled(TextField)({
   margin: "20px 0px",
 });
 
+const StyledTableCell = styled(TableCell)({
+  overflow: "auto",
+});
+
+const StyledTableRow = styled(TableRow)({
+  overflow: "auto",
+});
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -223,20 +231,20 @@ const Body = (trigger) => {
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableCell>Scientific Name</TableCell>
-            <TableCell>Image</TableCell>
-            <TableCell>Local Name</TableCell>
-            <TableCell>Medicinal Use</TableCell>
-            <TableCell>Benefits</TableCell>
-            <TableCell>Proper Usage</TableCell>
-            <TableCell>Actions</TableCell>
+            <StyledTableCell>Scientific Name</StyledTableCell>
+            <StyledTableCell>Image</StyledTableCell>
+            <StyledTableCell>Local Name</StyledTableCell>
+            <StyledTableCell>Medicinal Use</StyledTableCell>
+            <StyledTableCell>Benefits</StyledTableCell>
+            <StyledTableCell>Proper Usage</StyledTableCell>
+            <StyledTableCell>Actions</StyledTableCell>
           </TableHead>
           <TableBody>
             {allPlants.map((plant) => {
               return (
-                <TableRow key={plant.id}>
-                  <TableCell>{plant.id}</TableCell>
-                  <TableCell
+                <StyledTableRow key={plant.id}>
+                  <StyledTableCell>{plant.id}</StyledTableCell>
+                  <StyledTableCell
                     onClick={() => {
                       openInNewTab(plant.imgUrl);
                     }}
@@ -249,12 +257,12 @@ const Body = (trigger) => {
                       src={plant.imgUrl}
                       alt={plant.id}
                     />
-                  </TableCell>
-                  <TableCell>{plant.localName}</TableCell>
-                  <TableCell>{plant.medicinalUse}</TableCell>
-                  <TableCell>{plant.benefits}</TableCell>
-                  <TableCell>{plant.properUsage}</TableCell>
-                  <TableCell>
+                  </StyledTableCell>
+                  <StyledTableCell>{plant.localName}</StyledTableCell>
+                  <StyledTableCell>{plant.medicinalUse}</StyledTableCell>
+                  <StyledTableCell>{plant.benefits}</StyledTableCell>
+                  <StyledTableCell>{plant.properUsage}</StyledTableCell>
+                  <StyledTableCell>
                     <Button
                       variant="outlined"
                       size="small"
@@ -286,8 +294,8 @@ const Body = (trigger) => {
                     >
                       Delete
                     </Button>
-                  </TableCell>
-                </TableRow>
+                  </StyledTableCell>
+                </StyledTableRow>
               );
             })}
           </TableBody>
